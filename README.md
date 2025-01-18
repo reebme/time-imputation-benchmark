@@ -37,7 +37,7 @@
 ---
 
 ## Repository Structure
-- Data/Processed: Preprocessed datasets used for further analysis.
-- Notebooks/: Jupyter notebooks for each analysis step.
-- Src/: Python scripts for data preprocessing and analysis helpers.
-- Results/: Generated figures and tables.
+- `Data/Processed`: Preprocessed datasets used for further analysis.
+- `Notebooks/`: Jupyter notebooks for each analysis step.
+- `Src/`: Python scripts for data preprocessing and analysis helpers.
+- `Results/`: Generated figures and tables.
