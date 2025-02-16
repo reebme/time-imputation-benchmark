@@ -159,10 +159,11 @@ def generate_ar_process(ar_params, T, burnin_factor = 10, sigma = 1.0, random_se
     
     # Generate white noise
     noise = rng.normal(loc = 0.0, scale = sigma, size = total_length)
-    
+   
+    #TODO benchmark against pandas shift and calculate 
     # AR(p): X[t] = phi_1*X[t-1] + ... + phi_p*X[t-p] + noise[t]
     for t in range(p, total_length):
-        x[t] = np.flip(x[t-p:t]) @ ar_params + noise[t - p]
-        
+        x[t] = np.flip(x[t-p:t]) @ ar_params + noise[t]
+    
     # Discard the burn-in samples
-    return x[burnin:], noise
+    return x[burnin:], noise[burnin:]
