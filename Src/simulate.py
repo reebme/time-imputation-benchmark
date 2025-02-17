@@ -39,7 +39,7 @@ def generate_stationary_roots(p):
 
     # If p is odd, add a real root
     if num_real == 1:
-        real_root = rng.uniform(lower_bound, 1)
+        real_root = rng.uniform(-1 + lower_bound, 1)
         roots.append(real_root)
 
     return np.array(roots)
