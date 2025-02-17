@@ -1,3 +1,4 @@
+import numpy as np
 from hashlib import blake2b
 import json
 
@@ -27,8 +28,6 @@ def get_roots_hash_blake2b(roots, precision = 6, digest_size = 16):
     # Concatenate into a single string
     hash_input = "_".join(standardized_roots)
 
-    print(hash_input)
-    
     # Generate a BLAKE2b hash
     hash_object = blake2b(hash_input.encode('utf-8'), digest_size = digest_size)
     return hash_object.hexdigest()

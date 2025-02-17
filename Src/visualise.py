@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-def plot_roots_with_unit_circle(roots):
+def plot_roots_with_unit_circle(roots, f_name):
     """
     Plot the roots on the complex plane with a unit circle reference.
 
@@ -49,4 +49,5 @@ def plot_roots_with_unit_circle(roots):
     # Add a grid and legend
     ax.grid(True, linestyle='--', alpha=0.5)
     
+    plt.savefig(f_name)
     plt.show()
