@@ -49,5 +49,5 @@ def plot_roots_with_unit_circle(roots, f_name):
     # Add a grid and legend
     ax.grid(True, linestyle='--', alpha=0.5)
     
-    plt.savefig(f_name)
+    plt.savefig(f_name, bbox_inches='tight')
     plt.show()
