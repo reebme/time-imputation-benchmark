@@ -6,7 +6,7 @@ def generate_stationary_roots(p):
     """
     Generate p roots for the characteristic polynomial of an AR(p) process.
     
-    The characteristic polynomial follows the Z-transform representation:
+    The characteristic polynomial follows the representation:
         z^p - phi_1*z^(p-1) - ... - phi_(p-1)*z - phi_p = 0
 
     Conditions for stationarity:
@@ -106,6 +106,11 @@ def calculate_vietas_coeffs(roots):
 
     This function computes the phi_k values using dynamic programming,
     avoiding the exponential complexity of a brute-force approach.
+    
+    Note: Due to floating point precision, computed coefficient
+        may exhibit negligible imaginary parts
+        (typically on the order of 1e-15 or smaller),
+        which can be safely treated as zero.
     """
     p = len(roots)
     # Initialize the list: phi[0] = 1, phi[1...n] = 0
