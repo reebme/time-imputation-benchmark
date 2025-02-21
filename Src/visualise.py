@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import cmath
 
 def plot_roots_with_unit_circle(roots, f_name):
     """
@@ -52,7 +53,7 @@ def plot_roots_with_unit_circle(roots, f_name):
     plt.savefig(f_name, bbox_inches='tight')
     plt.show()
 
-def plot_contribution_from_roots(rradius, rangle, bradius, bangle, lags):
+def plot_contribution_from_roots(rradius, rangle, bradius, bangle, lags, f_name):
     """
     Plots the contribution of a pair of complex conjugate roots
     or a real root (indicated by rangle and bangle equal 0)
@@ -74,14 +75,19 @@ def plot_contribution_from_roots(rradius, rangle, bradius, bangle, lags):
         lags (int):
             The number of discrete time steps (lags)
             over which to calculate and display the contribution.
+        fname (string):
+            Name of the file to save the plot in.
     """
     if (rangle == 0) != (bangle == 0):
         raise ValueError("Invalid input: rangle and bangle must be either both zero or both nonzero.")
     
     if rangle == 0:
         ampl_scaling = 1
+        roots_str = "\n".join([str(np.round(cmath.rect(rradius, rangle)), 3)])
     else:
         ampl_scaling = 2
+        roots_str = "\n".join([str(np.round(cmath.rect(rradius, rangle), 3)), 
+                                str(np.round(cmath.rect(rradius, -rangle), 3))])
     
     x_axis = np.arange(0, lags)
     y = ampl_scaling * bradius * np.pow(rradius, x_axis) * np.cos(rangle*x_axis + bangle)
@@ -99,4 +105,10 @@ def plot_contribution_from_roots(rradius, rangle, bradius, bangle, lags):
     plt.axhline(y = 0, c = 'black')
     plt.axvline(x = 0, c = 'black')
     plt.grid(True)
+
+    title = "\n".join(["Contribution of the root(s)", roots_str, "to the autocovariance"])
+    plt.title(title)
+
+    plt.savefig(f_name, bbox_inches='tight')
+
     plt.show()
