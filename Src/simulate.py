@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.polynomial import Polynomial as P
 from itertools import combinations
+from statsmodels.tsa.stattools import acovf
 
 def generate_stationary_roots(p):
     """
@@ -129,8 +130,7 @@ def generate_ar_process(ar_params, T, burnin_factor = 10, sigma = 1.0, random_se
     """
     Generate a synthetic AR(p) time series of length T using the given coefficients.
     
-    Parameters
-    ----------
+    Parameters:
     ar_params : array-like
         AR coefficients, e.g. [phi_1, phi_2, ..., phi_p] for AR(p).
         The model is X_t = sum_{i=1..p} phi_i * X_{t-i} + e_t
@@ -143,8 +143,7 @@ def generate_ar_process(ar_params, T, burnin_factor = 10, sigma = 1.0, random_se
     random_seed : int, optional
         Seed for the random number generator (for reproducibility).
 
-    Returns
-    -------
+    Returns:
     x : ndarray
         A 1D numpy array of length T containing the generated AR(p) process.
     noise: ndarray
@@ -172,3 +171,59 @@ def generate_ar_process(ar_params, T, burnin_factor = 10, sigma = 1.0, random_se
     
     # Discard the burn-in samples
     return x[burnin:], noise[burnin:]
+
+def Yule_Walker_solution_coeffs(roots, series):
+    """
+    Compute an approximation of the coefficients of the Yule-Walker difference equation solution.
+
+    This function determines the coefficients (beta) which decompose the autocovariance
+    function of an autoregressive (AR) process into a sum of exponential components based
+    on the roots of the characteristic polynomial. In particular, the autocovariance
+    at lag k is given by:
+
+        autocovariance(k) = sum from j=1 to p of (beta_j * (lambda_j)^k),
+        for k = 0, 1, ..., p-1, where lambda_j are the provided roots and p is the number
+        of roots.
+    
+    To solve for beta, the function constructs a Vandermonde matrix A with entries:
+
+        A[i, j] = (lambda_j)^i, for i = 0, 1, ..., p-1,
+
+    and then solves the linear system:
+
+        A * beta = y,
+
+    where y is a vector containing the first p autocovariances of the time series, computed
+    via an autocovariance function (acovf) from statsmodels.tsa.stattools.
+
+    Parameters:
+        roots (array-like):
+            A sequence of roots (real or complex) of the AR characteristic polynomial.
+            The number of roots (p) defines the order of the difference equation.
+        series (array-like):
+            The time series data from which the autocovariance sequence is computed.
+            Only the first p autocovariances (lags 0 through p-1) are used.
+
+    Returns:
+        beta (ndarray):
+            An array of coefficients representing the solution to the Yule-Walker difference
+            equation, computed from the sample autocovariances. These coefficients quantify the
+            contribution of each exponential mode (associated with a corresponding root) to the
+            autocovariance function.
+
+    Notes:
+        - This function assumes the availability of an autocovariance function
+          acovf from statsmodels.tsa.stattools.
+        - The computed beta coefficients provide a complete solution to the Yule-Walker difference
+          equation for a stationary AR process of order p.
+        - For short time series, the sample autocovariances used in this computation may be imprecise,
+          which affects the quality of the  beta coefficients approximations.
+    """
+    p = len(roots)
+    A = []
+    for i in range(p):
+        A.append(np.pow(roots, i))
+    A = np.array(A)
+    y = acovf(series)[0:p]
+    beta = np.linalg.solve(A, y)
+    return beta
