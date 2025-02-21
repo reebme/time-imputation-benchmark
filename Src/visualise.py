@@ -51,3 +51,52 @@ def plot_roots_with_unit_circle(roots, f_name):
     
     plt.savefig(f_name, bbox_inches='tight')
     plt.show()
+
+def plot_contribution_from_roots(rradius, rangle, bradius, bangle, lags):
+    """
+    Plots the contribution of a pair of complex conjugate roots
+    or a real root (indicated by rangle and bangle equal 0)
+    to the autocovariance over a series of lags.
+
+    Parameters:
+        rradius (float):
+            The magnitude (radius) of the complex conjugate roots
+            or of the real root.
+        rangle (float) [radians]:
+            The angle associated with the conjugate roots,
+            if the root is real, this is 0.
+        bradius (float):
+            The radius of the coefficient in the solution
+            to a difference Yule-Walker equation associated with the root(s).
+        bangle (float):
+            The angle of the coefficient in the solution
+            to a difference Yule-Walker equation associated with the root(s).
+        lags (int):
+            The number of discrete time steps (lags)
+            over which to calculate and display the contribution.
+    """
+    if (rangle == 0) != (bangle == 0):
+        raise ValueError("Invalid input: rangle and bangle must be either both zero or both nonzero.")
+    
+    if rangle == 0:
+        ampl_scaling = 1
+    else:
+        ampl_scaling = 2
+    
+    x_axis = np.arange(0, lags)
+    y = ampl_scaling * bradius * np.pow(rradius, x_axis) * np.cos(rangle*x_axis + bangle)
+    plt.scatter(x_axis, y)
+
+    for i in range(len(x_axis)):
+        ymin_pt = np.min([0, y[i]])
+        ymax_pt = np.max([0, y[i]])
+        plt.vlines(x = x_axis[i], ymin = ymin_pt, ymax = ymax_pt, linewidth = 2)
+
+    x_axis = np.arange(0, lags, 0.1)
+    y = ampl_scaling * bradius * np.pow(rradius, x_axis) * np.cos(rangle*x_axis + bangle)
+    plt.fill_betweenx(y, x_axis, color = 'blue', alpha = 0.2)
+    
+    plt.axhline(y = 0, c = 'black')
+    plt.axvline(x = 0, c = 'black')
+    plt.grid(True)
+    plt.show()
