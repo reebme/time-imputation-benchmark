@@ -94,7 +94,7 @@ def plot_contribution_from_roots(rradius, rangle, bradius, bangle, lags):
 
     x_axis = np.arange(0, lags, 0.1)
     y = ampl_scaling * bradius * np.pow(rradius, x_axis) * np.cos(rangle*x_axis + bangle)
-    plt.fill_betweenx(y, x_axis, color = 'blue', alpha = 0.2)
+    plt.fill_betweenx(y, x_axis, color = 'orange', alpha = 0.2)
     
     plt.axhline(y = 0, c = 'black')
     plt.axvline(x = 0, c = 'black')
