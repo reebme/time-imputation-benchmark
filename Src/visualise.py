@@ -95,6 +95,15 @@ def plot_contribution_from_roots(rradius, rangle, bradius, bangle, lags, f_name)
                                 str(np.round(cmath.rect(rradius, -rangle), 3))])
    
     plt.figure(figsize = (10,7))
+
+    y_str = (
+        f"f(x) = "
+        f"{ampl_scaling} * "
+        f"{np.round(np.abs(bradius), 3)} * "
+        f"{np.round(rradius, 3)}^x * "
+        f"cos({np.round(rangle, 3)}* x + {np.round(bangle, 3)})"
+    )
+
  
     x_axis = np.arange(0, lags)
     y = ampl_scaling * bradius * np.pow(rradius, x_axis) * np.cos(rangle*x_axis + bangle)
@@ -105,15 +114,17 @@ def plot_contribution_from_roots(rradius, rangle, bradius, bangle, lags, f_name)
         ymax_pt = np.max([0, y[i]])
         plt.vlines(x = x_axis[i], ymin = ymin_pt, ymax = ymax_pt, linewidth = 2)
 
-    x_axis = np.arange(0, lags, 0.1)
+    x_axis = np.arange(0, lags, 0.05)
     y = ampl_scaling * bradius * np.pow(rradius, x_axis) * np.cos(rangle*x_axis + bangle)
-    plt.fill_betweenx(y, x_axis, color = 'orange', alpha = 0.3)
+    plt.fill_between(x_axis, y, color = 'orange', alpha = 0.3)
+    #plt.plot(x_axis, y, color = "orange")
     
     plt.axhline(y = 0, c = 'black')
     plt.axvline(x = 0, c = 'black')
     plt.grid(True)
 
-    title = " ".join(["Contribution of the root(s)", roots_str, "to the autocovariance"])
+    rc = " ".join(["Contribution of the root(s)", roots_str, "to the autocovariance"])
+    title = "\n".join([rc, y_str])
     plt.title(title)
 
     plt.savefig(f_name, bbox_inches='tight')
