@@ -78,17 +78,24 @@ def plot_contribution_from_roots(rradius, rangle, bradius, bangle, lags, f_name)
         fname (string):
             Name of the file to save the plot in.
     """
-    if (rangle == 0) != (bangle == 0):
-        raise ValueError("Invalid input: rangle and bangle must be either both zero or both nonzero.")
+    # For a real root: rangle is 0 or pi, and bangle must be 0
+    if (rangle in [0, np.pi]) and (bangle != 0):
+        raise ValueError("For a real root (rangle = 0 or pi), bangle must be 0.")
+
+    # For a complex-conjugate root pair: rangle not in [0, pi], so bangle must be nonzero
+    elif (rangle not in [0, np.pi]) and (bangle == 0):
+        raise ValueError("For complex roots, bangle must be nonzero.")
     
-    if rangle == 0:
+    if rangle in [0, np.pi]:
         ampl_scaling = 1
-        roots_str = "\n".join([str(np.round(cmath.rect(rradius, rangle)), 3)])
+        roots_str = " ".join([str(np.round(cmath.rect(rradius, rangle), 3))])
     else:
         ampl_scaling = 2
-        roots_str = "\n".join([str(np.round(cmath.rect(rradius, rangle), 3)), 
+        roots_str = " ".join([str(np.round(cmath.rect(rradius, rangle), 3)), 
                                 str(np.round(cmath.rect(rradius, -rangle), 3))])
-    
+   
+    plt.figure(figsize = (10,7))
+ 
     x_axis = np.arange(0, lags)
     y = ampl_scaling * bradius * np.pow(rradius, x_axis) * np.cos(rangle*x_axis + bangle)
     plt.scatter(x_axis, y)
@@ -106,7 +113,7 @@ def plot_contribution_from_roots(rradius, rangle, bradius, bangle, lags, f_name)
     plt.axvline(x = 0, c = 'black')
     plt.grid(True)
 
-    title = "\n".join(["Contribution of the root(s)", roots_str, "to the autocovariance"])
+    title = " ".join(["Contribution of the root(s)", roots_str, "to the autocovariance"])
     plt.title(title)
 
     plt.savefig(f_name, bbox_inches='tight')
